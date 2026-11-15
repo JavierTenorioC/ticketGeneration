@@ -1,0 +1,34 @@
+{
+  "version": "2026-11-15",
+  "productos": [
+    { "id": "P001", "nombre": "Tornillo 1/4", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 2.5 },
+        { "unidad": "bolsa", "factor": 50, "precio": 100 },
+        { "unidad": "docena", "factor": 12, "precio": 27 }
+      ] },
+    { "id": "P002", "nombre": "Clavo 2 pulgadas", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 1 },
+        { "unidad": "bolsa", "factor": 100, "precio": 70 }
+      ] },
+    { "id": "P003", "nombre": "Cinta adhesiva", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 18 },
+        { "unidad": "docena", "factor": 12, "precio": 190 }
+      ] },
+    { "id": "P004", "nombre": "Bolsa de plástico chica", "activo": true,
+      "presentaciones": [
+        { "unidad": "bolsa", "factor": 100, "precio": 45 }
+      ] },
+    { "id": "P005", "nombre": "Lápiz", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 6 },
+        { "unidad": "docena", "factor": 12, "precio": 60 }
+      ] },
+    { "id": "P006", "nombre": "Producto descontinuado", "activo": false,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 10 }
+      ] }
+  ]
+}

@@ -1,34 +1,124 @@
 {
   "version": "2026-11-15",
   "productos": [
-    { "id": "P001", "nombre": "Tornillo 1/4", "activo": true,
+    { "id": "E1", "nombre": "Espiral #1", "activo": true,
       "presentaciones": [
-        { "unidad": "pieza", "factor": 1, "precio": 2.5 },
-        { "unidad": "bolsa", "factor": 50, "precio": 100 },
-        { "unidad": "docena", "factor": 12, "precio": 27 }
+        { "unidad": "bolsa", "factor": 1, "precio": 22 },
+        { "unidad": "bulto", "factor": 100, "precio": 22 }
       ] },
-    { "id": "P002", "nombre": "Clavo 2 pulgadas", "activo": true,
+    { "id": "E2", "nombre": "Espiral #2", "activo": true,
       "presentaciones": [
-        { "unidad": "pieza", "factor": 1, "precio": 1 },
-        { "unidad": "bolsa", "factor": 100, "precio": 70 }
+        { "unidad": "bolsa", "factor": 1, "precio": 32 },
+        { "unidad": "bulto", "factor": 80, "precio": 32 }
       ] },
-    { "id": "P003", "nombre": "Cinta adhesiva", "activo": true,
+    { "id": "E3", "nombre": "Espiral #3", "activo": true,
       "presentaciones": [
-        { "unidad": "pieza", "factor": 1, "precio": 18 },
-        { "unidad": "docena", "factor": 12, "precio": 190 }
+        { "unidad": "pieza", "factor": 1, "precio": 40 },
+        { "unidad": "bulto", "factor": 50, "precio": 40 }
       ] },
-    { "id": "P004", "nombre": "Bolsa de plástico chica", "activo": true,
+    { "id": "E4", "nombre": "Espiral #4", "activo": true,
       "presentaciones": [
-        { "unidad": "bolsa", "factor": 100, "precio": 45 }
+        { "unidad": "pieza", "factor": 1, "precio": 52 },
+        { "unidad": "bulto", "factor": 25, "precio": 52 }
       ] },
-    { "id": "P005", "nombre": "Lápiz", "activo": true,
+    { "id": "E5", "nombre": "Espiral #5", "activo": true,
       "presentaciones": [
-        { "unidad": "pieza", "factor": 1, "precio": 6 },
-        { "unidad": "docena", "factor": 12, "precio": 60 }
+        { "unidad": "pieza", "factor": 1, "precio": 100 },
+        { "unidad": "bulto", "factor": 18, "precio": 100 }
+      ] },
+    { "id": "G1", "nombre": "Gusano #1", "activo": true,
+      "presentaciones": [
+        { "unidad": "bolsa", "factor": 1, "precio": 80 },
+        { "unidad": "bulto", "factor": 30, "precio": 80 }
+      ] },
+    { "id": "G2", "nombre": "Gusano #2", "activo": true,
+      "presentaciones": [
+        { "unidad": "bolsa", "factor": 1, "precio": 100 },
+        { "unidad": "bulto", "factor": 25, "precio": 100 }
+      ] },
+    { "id": "G3", "nombre": "Gusano #3", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 115 },
+        { "unidad": "bulto", "factor": 20, "precio": 115 }
+      ] },
+    { "id": "G4", "nombre": "Gusano #4", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 140 },
+        { "unidad": "bulto", "factor": 12, "precio": 140 }
+      ] },
+    { "id": "G5", "nombre": "Gusano #5", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 110 },
+        { "unidad": "bulto", "factor": 18, "precio": 110 }
+      ] },
+    { "id": "GJ", "nombre": "Gusano Jumbo", "activo": true,
+      "presentaciones": [
+        { "unidad": "bolsa", "factor": 1, "precio": 135 },
+        { "unidad": "bulto", "factor": 15, "precio": 135 }
+      ] },
+    { "id": "MG", "nombre": "Medio Gusano", "activo": true,
+      "presentaciones": [
+        { "unidad": "bolsa", "factor": 1, "precio": 32 },
+        { "unidad": "bulto", "factor": 45, "precio": 32 }
+      ] },
+    { "id": "Ll", "nombre": "Lluvia", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 22 }
+      ] },
+    { "id": "FCGr", "nombre": "Farol Casa Grande", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 260 }
+      ] },
+    { "id": "FCIn", "nombre": "Farol Casa Intermedio", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 240 }
+      ] },
+    { "id": "FCMe", "nombre": "Farol Casa Mediano", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 220 }
+      ] },
+    { "id": "FCCh", "nombre": "Farol Casa Chico", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 195 }
+      ] },
+    { "id": "FCMi", "nombre": "Farol Casa Mini", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 340 }
+      ] },
+    { "id": "FBGr", "nombre": "Farol Bola Grande", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 260 }
+      ] },
+    { "id": "FBIn", "nombre": "Farol Bola Intermedio", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 240 }
+      ] },
+    { "id": "FBMe", "nombre": "Farol Bola Mediano", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 220 }
+      ] },
+    { "id": "FBCh", "nombre": "Farol Bola Chico", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 195 }
+      ] },
+    { "id": "FBMi", "nombre": "Farol Bola Mini", "activo": true,
+      "presentaciones": [
+        { "unidad": "pieza", "factor": 1, "precio": 30 },
+        { "unidad": "docena", "factor": 12, "precio": 340 }
       ] },
     { "id": "P006", "nombre": "Producto descontinuado", "activo": false,
       "presentaciones": [
-        { "unidad": "pieza", "factor": 1, "precio": 10 }
+        { "unidad": "pieza", "factor": 1, "precio": 18 },
+        { "unidad": "docena", "factor": 12, "precio": 190 }
       ] }
   ]
 }

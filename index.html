@@ -21,6 +21,13 @@ button{cursor:pointer}button.p,.on{background:var(--ac)!important;color:var(--ac
 .ban{background:var(--wbg);color:var(--warn);padding:8px 10px;border-radius:10px;margin:8px 0}
 .res button{display:block;width:100%;text-align:left;margin-top:4px}
 textarea{width:100%;height:140px;font:12px monospace;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:8px}
+table.x{width:100%;border-collapse:collapse;font-size:14px}
+.x th,.x td{border:1px solid var(--bd);padding:6px 5px;vertical-align:top}
+.x th{background:var(--bd);font-size:12px;text-align:left}
+.x .r{text-align:right;white-space:nowrap}.x .c{text-align:center}
+.x tbody tr:nth-child(even){background:var(--bg)}.x tr.sl td{background:var(--wbg)}
+.x tfoot td{font-weight:600;background:var(--bg)}.x tfoot .g td{font-size:17px}
+.bar{display:flex;gap:6px;margin-top:8px}.bar button{flex:1;padding:8px 2px}
 .hide{display:none}#qr svg{width:220px;height:220px;display:block;margin:8px auto;background:#fff;padding:6px;border-radius:8px}
 input,select{width:100%}
 </style></head><body>
@@ -28,6 +35,7 @@ input,select{width:100%}
 <div class="tabs"><button data-t="n" class="on">Nuevo</button><button data-t="h">Historial</button><button data-t="x">Exportar</button></div>
 
 <section id="n">
+<div class="card"><small>Vendedor</small><input id="sel" placeholder="Nombre del vendedor" autocomplete="name"></div>
 <div id="ban" class="ban hide"></div>
 <div class="card">
 <div class="seg" style="margin-top:0"><button id="mc" class="on">Catálogo</button><button id="mm">Artículo libre</button></div>
@@ -35,9 +43,11 @@ input,select{width:100%}
 <div id="pick" class="hide" style="margin-top:8px"><b id="pn"></b><select id="pres" style="margin-top:6px"></select></div></div>
 <div id="manp" class="hide"><input id="mn" placeholder="Nombre del artículo"></div>
 <div class="row" style="margin-top:8px"><input id="pr" type="number" inputmode="decimal" placeholder="Precio" step="0.01"><input id="qt" type="number" inputmode="numeric" value="1" min="1"></div>
+<input id="ds" placeholder="Descripción del artículo (opcional)" style="margin-top:8px">
 <button class="p" id="add" style="width:100%;margin-top:8px">Agregar al ticket</button></div>
-<div class="card"><div id="items"></div>
-<div class="tot" style="margin-top:8px"><div><span>Artículos</span><b id="u">0</b></div><div><span>Piezas equivalentes</span><b id="pz">0</b></div><div class="g"><span>Total</span><span id="g"></span></div></div></div>
+<div class="card" style="padding:8px"><div id="items"></div>
+<div id="bar" class="bar hide"><button id="bm">−1</button><button id="bp">+1</button><button id="bd">✎ Nota</button><button id="bx">Quitar</button></div></div>
+<div class="card"><small>Descripción del ticket (opcional)</small><input id="desc" placeholder="Cliente, notas, entrega..."></div>
 <div class="row"><button id="clr" style="flex:1">Limpiar</button><button class="p" id="save" style="flex:2">Guardar ticket</button></div>
 </section>
 
@@ -45,7 +55,7 @@ input,select{width:100%}
 
 <section id="x" class="hide"><div class="card"><p class="m">Un renglón por artículo, listo para analizar en Excel o Python.</p>
 <select id="rng"><option value="all">Todos los tickets</option><option value="today">Solo los de hoy</option></select>
-<div class="row" style="margin-top:8px"><button class="p" id="dl" style="flex:1">Descargar CSV</button><button id="sh" style="flex:1">Compartir</button></div>
+<div class="row" style="margin-top:8px"><button class="p" id="dl" style="flex:1">CSV</button><button class="p" id="dj" style="flex:1">JSON</button><button id="sh" style="flex:1">Compartir</button></div>
 <textarea id="out" readonly style="margin-top:8px"></textarea><button id="cp" style="width:100%;margin-top:8px">Copiar texto</button></div></section>
 
 <div id="det" class="card hide"></div>
@@ -72,42 +82,44 @@ function setPr(){if(sel)$("pr").value=sel.presentaciones[+$("pres").value].preci
 $("pres").onchange=setPr;
 function mode(m){manual=m;sel=null;$("mc").classList.toggle("on",!m);$("mm").classList.toggle("on",m);$("catp").classList.toggle("hide",m);$("manp").classList.toggle("hide",!m);$("pick").classList.add("hide");$("pr").value="";if(!m)search()}
 $("mc").onclick=()=>mode(false);$("mm").onclick=()=>mode(true);
-$("add").onclick=()=>{const p=parseFloat($("pr").value),q=parseInt($("qt").value);if(!(p>=0)||!(q>0))return alert("Revisa precio y cantidad");
-if(manual){const n=$("mn").value.trim();if(!n)return alert("Escribe el nombre");draft.push({pid:"LIBRE",n,u:"pieza",f:1,p,q,pc:null,man:false});$("mn").value=""}
-else{if(!sel)return alert("Elige un producto del catálogo");const x=sel.presentaciones[+$("pres").value];draft.push({pid:sel.id,n:sel.nombre,u:x.unidad,f:x.factor,p,q,pc:x.precio,man:p!==x.precio});sel=null;$("pick").classList.add("hide");$("pr").value="";search()}
-$("qt").value=1;draw()};
-function draw(){const c=calc(draft);
-$("items").innerHTML=draft.length?draft.map((i,k)=>`<div class="it"><div>${esc(i.n)}${i.man?'<span class="b">PRECIO CAMBIADO</span>':""}<br><small>${i.q} ${unit(i)} × ${mx.format(i.p)}</small></div><div style="text-align:right"><b>${mx.format(i.p*i.q)}</b><br><button data-m="${k}" data-d="-1" style="padding:2px 10px">−</button> <button data-m="${k}" data-d="1" style="padding:2px 10px">+</button></div></div>`).join(""):'<p class="m">Aún no hay artículos.</p>';
-$("u").textContent=c.u;$("pz").textContent=c.pz;$("g").textContent=mx.format(c.g);
+$("add").onclick=()=>{const p=parseFloat($("pr").value),q=parseInt($("qt").value),d=$("ds").value.trim();if(!(p>=0)||!(q>0))return alert("Revisa precio y cantidad");
+if(manual){const n=$("mn").value.trim();if(!n)return alert("Escribe el nombre");draft.push({pid:"LIBRE",n,u:"pieza",f:1,p,q,pc:null,man:false,d});$("mn").value=""}
+else{if(!sel)return alert("Elige un producto del catálogo");const x=sel.presentaciones[+$("pres").value];draft.push({pid:sel.id,n:sel.nombre,u:x.unidad,f:x.factor,p,q,pc:x.precio,man:p!==x.precio,d});sel=null;$("pick").classList.add("hide");$("pr").value="";search()}
+$("qt").value=1;$("ds").value="";draw()};
+let rowSel=-1;const nf=new Intl.NumberFormat("es-MX",{minimumFractionDigits:2,maximumFractionDigits:2});
+function tbl(items,sel){const c=calc(items);return `<div style="overflow-x:auto"><table class="x"><thead><tr><th class="c">#</th><th class="c">Cant.</th><th>Artículo</th><th class="r">P. unit.</th><th class="r">Importe</th></tr></thead><tbody>${items.length?items.map((i,k)=>`<tr${sel&&k===rowSel?' class="sl"':""} data-r="${k}"><td class="c">${k+1}</td><td class="c"><b>${i.q}</b></td><td>${esc(i.n)}${i.man?'<span class="b">PRECIO</span>':""}<br><small>${esc(i.u)}${i.d?" · "+esc(i.d):""}</small></td><td class="r">${nf.format(i.p)}</td><td class="r"><b>${nf.format(i.p*i.q)}</b></td></tr>`).join(""):'<tr><td colspan="5" class="m">Aún no hay artículos.</td></tr>'}</tbody><tfoot><tr><td colspan="4" class="r">Total de artículos</td><td class="r">${c.u}</td></tr><tr><td colspan="4" class="r">Piezas equivalentes</td><td class="r">${c.pz}</td></tr><tr class="g"><td colspan="3" class="r">TOTAL</td><td colspan="2" class="r">${mx.format(c.g)}</td></tr></tfoot></table></div>`}
+function draw(){if(rowSel>=draft.length)rowSel=-1;$("items").innerHTML=tbl(draft,true)+(draft.length&&rowSel<0?'<p class="m" style="margin:6px 2px 0">Toca un renglón para cambiar cantidad, nota o quitarlo.</p>':"");$("bar").classList.toggle("hide",rowSel<0);
 const b=$("ban");if(editing){b.classList.remove("hide");b.textContent="Editando "+editing.id+". Al guardar se marcará como EDITADO."}else b.classList.add("hide")}
-$("items").onclick=e=>{const b=e.target.closest("button");if(!b)return;const k=+b.dataset.m;draft[k].q+=+b.dataset.d;if(draft[k].q<1)draft.splice(k,1);draw()};
-$("clr").onclick=()=>{draft=[];editing=null;draw()};
-$("save").onclick=()=>{if(!draft.length)return alert("Agrega al menos un artículo");const c=calc(draft),now=new Date().toISOString();
-if(editing){const t=S.tickets.find(x=>x.id===editing.id);t.edits.push({at:now,prevTotal:t.total,prevItems:t.items});Object.assign(t,{items:draft,total:c.g,units:c.u,pieces:c.pz,updated:now,edited:true,cat_v:cat.v})}
-else{S.seq++;S.tickets.push({id:S.dev+"-"+String(S.seq).padStart(5,"0"),device:S.dev,deviceName:S.name,created:now,updated:now,items:draft,total:c.g,units:c.u,pieces:c.pz,edited:false,edits:[],cat_v:cat.v})}
-persist();draft=[];editing=null;draw();tab("h")};
-function list(){const L=[...S.tickets].reverse();$("list").innerHTML=L.length?L.map(t=>`<div class="card"><div class="row" style="justify-content:space-between"><b>${t.id}${t.edited?'<span class="b">EDITADO</span>':""}</b><b>${mx.format(t.total)}</b></div>
-<small>${new Date(t.updated).toLocaleString("es-MX")} · ${t.units} artículos</small><div class="row" style="margin-top:8px"><button data-v="${t.id}" style="flex:1">Ver / QR</button><button data-e="${t.id}" style="flex:1">Editar</button></div></div>`).join(""):'<p class="m">Sin tickets guardados.</p>'}
+$("items").onclick=e=>{const tr=e.target.closest("tr[data-r]");if(!tr)return;const k=+tr.dataset.r;rowSel=rowSel===k?-1:k;draw()};
+$("bm").onclick=()=>{const i=draft[rowSel];if(!i)return;i.q--;if(i.q<1){draft.splice(rowSel,1);rowSel=-1}draw()};
+$("bp").onclick=()=>{if(draft[rowSel]){draft[rowSel].q++;draw()}};
+$("bd").onclick=()=>{const i=draft[rowSel];if(!i)return;const v=prompt("Descripción del artículo",i.d||"");if(v!==null){i.d=v.trim();draw()}};
+$("bx").onclick=()=>{if(draft[rowSel]&&confirm("¿Quitar este artículo?")){draft.splice(rowSel,1);rowSel=-1;draw()}};
+$("clr").onclick=()=>{draft=[];editing=null;rowSel=-1;$("desc").value="";draw()};
+$("sel").oninput=()=>{S.seller=$("sel").value.trim();persist()};
+$("save").onclick=()=>{const sl=$("sel").value.trim();if(!sl)return alert("Escribe el nombre del vendedor");if(!draft.length)return alert("Agrega al menos un artículo");const c=calc(draft),now=new Date().toISOString(),desc=$("desc").value.trim();
+if(editing){const t=S.tickets.find(x=>x.id===editing.id);t.edits.push({at:now,by:sl,prevTotal:t.total,prevItems:t.items,prevDesc:t.desc||""});Object.assign(t,{items:draft,desc,total:c.g,units:c.u,pieces:c.pz,updated:now,edited:true,cat_v:cat.v})}
+else{S.seq++;S.tickets.push({id:S.dev+"-"+String(S.seq).padStart(5,"0"),device:S.dev,deviceName:S.name,seller:sl,desc,created:now,updated:now,items:draft,total:c.g,units:c.u,pieces:c.pz,edited:false,edits:[],cat_v:cat.v})}
+persist();draft=[];editing=null;rowSel=-1;$("desc").value="";draw();tab("h")};
+function list(){const L=[...S.tickets].reverse();$("list").innerHTML=L.length?L.map(t=>`<div class="card"><div class="row" style="justify-content:space-between"><b>${t.id}${t.edited?'<span class="b">EDITADO</span>':""}</b><b>${mx.format(t.total)}</b></div><small>${esc(t.seller||"Sin vendedor")} · ${new Date(t.updated).toLocaleString("es-MX")} · ${t.units} art.</small>${t.desc?`<br><small>${esc(t.desc)}</small>`:""}<div class="row" style="margin-top:8px"><button data-v="${t.id}" style="flex:1">Ver / QR</button><button data-e="${t.id}" style="flex:1">Editar</button></div></div>`).join(""):'<p class="m">Sin tickets guardados.</p>'}
 $("list").onclick=e=>{const v=e.target.dataset.v,ed=e.target.dataset.e;
-if(ed){const t=S.tickets.find(x=>x.id===ed);editing=t;draft=t.items.map(i=>({...i}));tab("n");draw()}
-if(v){const t=S.tickets.find(x=>x.id===v);let qr="";try{const q=qrcode(0,"M");q.addData(JSON.stringify({id:t.id,t:t.updated,e:t.edited?1:0,i:t.items.map(i=>[i.pid,i.u,i.q,i.p]),g:t.total}));q.make();qr=q.createSvgTag(4)}catch(x){qr="<p class='m'>Ticket muy grande para QR</p>"}
-const d=$("det");d.classList.remove("hide");d.innerHTML=`<b>${t.id}</b>${t.edited?'<span class="b">EDITADO</span>':""}<br><small>${esc(t.deviceName)} · creado ${new Date(t.created).toLocaleString("es-MX")}</small>
-${t.items.map(i=>`<div class="it"><span>${esc(i.n)}${i.man?'<span class="b">PRECIO CAMBIADO</span>':""} <small>${i.q} ${unit(i)} × ${mx.format(i.p)}</small></span><b>${mx.format(i.p*i.q)}</b></div>`).join("")}
-<div class="tot"><div><span>Artículos</span><b>${t.units}</b></div><div><span>Piezas equivalentes</span><b>${t.pieces}</b></div><div class="g"><span>Total</span><span>${mx.format(t.total)}</span></div></div>
-${t.edits.length?`<small>Ediciones: ${t.edits.length} (última ${new Date(t.edits.at(-1).at).toLocaleString("es-MX")})</small>`:""}<div id="qr">${qr}</div><button id="cl" style="width:100%">Cerrar</button>`;
+if(ed){const t=S.tickets.find(x=>x.id===ed);editing=t;draft=t.items.map(i=>({...i}));rowSel=-1;$("desc").value=t.desc||"";tab("n");draw()}
+if(v){const t=S.tickets.find(x=>x.id===v);let qr="";try{const q=qrcode(0,"M");q.addData(JSON.stringify({id:t.id,v:t.seller||"",d:(t.desc||"").slice(0,80),t:t.updated,e:t.edited?1:0,i:t.items.map(i=>[i.pid,i.u,i.q,i.p]),g:t.total}));q.make();qr=q.createSvgTag(4)}catch(x){qr="<p class='m'>Ticket muy grande para QR</p>"}
+const d=$("det"),le=t.edits.at(-1);d.classList.remove("hide");d.innerHTML=`<b>Ticket ${t.id}</b>${t.edited?'<span class="b">EDITADO</span>':""}<br><small>Vendedor: <b>${esc(t.seller||"-")}</b><br>${new Date(t.created).toLocaleString("es-MX")} · ${esc(t.deviceName)}</small><div style="margin-top:8px">${tbl(t.items,false)}</div>${t.desc?`<p style="margin:8px 0 0"><small>Notas:</small><br>${esc(t.desc)}</p>`:""}${le?`<p class="m">Ediciones: ${t.edits.length} · última ${new Date(le.at).toLocaleString("es-MX")}${le.by?" por "+esc(le.by):""}</p>`:""}<div id="qr">${qr}</div><button id="cl" style="width:100%">Cerrar</button>`;
 $("cl").onclick=()=>d.classList.add("hide");d.scrollIntoView()}};
 function pick(){const hoy=new Date().toDateString();return S.tickets.filter(t=>$("rng").value==="all"||new Date(t.created).toDateString()===hoy)}
-function csv(){const h=["ticket_id","dispositivo_id","dispositivo","creado","actualizado","editado","num_ediciones","producto_id","producto","unidad","factor_piezas","cantidad","piezas_equivalentes","precio_unitario","precio_catalogo","precio_modificado","importe","total_ticket","catalogo_v"];
-const rows=[];pick().forEach(t=>t.items.forEach(i=>rows.push([t.id,t.device,t.deviceName,t.created,t.updated,t.edited?"SI":"NO",t.edits.length,i.pid,i.n,i.u,i.f,i.q,i.q*i.f,i.p,i.pc??"",i.man?"SI":"NO",r2(i.p*i.q),t.total,t.cat_v||""])));
+function csv(){const h=["ticket_id","dispositivo_id","dispositivo","vendedor","creado","actualizado","editado","num_ediciones","descripcion_ticket","producto_id","producto","descripcion_articulo","unidad","factor_piezas","cantidad","piezas_equivalentes","precio_unitario","precio_catalogo","precio_modificado","importe","total_ticket","catalogo_v"];
+const rows=[];pick().forEach(t=>t.items.forEach(i=>rows.push([t.id,t.device,t.deviceName,t.seller||"",t.created,t.updated,t.edited?"SI":"NO",t.edits.length,t.desc||"",i.pid,i.n,i.d||"",i.u,i.f,i.q,i.q*i.f,i.p,i.pc??"",i.man?"SI":"NO",r2(i.p*i.q),t.total,t.cat_v||""])));
 return [h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n")}
-function fname(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `tickets_${S.dev}_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.csv`}
-function mkfile(){return new Blob(["\ufeff"+csv()],{type:"text/csv;charset=utf-8"})}
-$("dl").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(mkfile());a.download=fname();document.body.appendChild(a);a.click();a.remove()};
-$("sh").onclick=async()=>{const f=new File([mkfile()],fname(),{type:"text/csv"});try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:"Tickets"});else alert("Tu navegador no permite compartir archivos. Usa Descargar CSV.")}catch(e){}};
+function fname(x){const d=new Date(),p=n=>String(n).padStart(2,"0");return `tickets_${S.dev}_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.${x}`}
+function mkfile(j){return j?new Blob([JSON.stringify(pick(),null,1)],{type:"application/json"}):new Blob(["\ufeff"+csv()],{type:"text/csv;charset=utf-8"})}
+function dl(j){const a=document.createElement("a");a.href=URL.createObjectURL(mkfile(j));a.download=fname(j?"json":"csv");document.body.appendChild(a);a.click();a.remove()}
+$("dl").onclick=()=>dl(false);$("dj").onclick=()=>dl(true);
+$("sh").onclick=async()=>{const f=new File([mkfile(false)],fname("csv"),{type:"text/csv"});try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:"Tickets"});else alert("Tu navegador no permite compartir archivos. Usa las opciones de descarga.")}catch(e){}};
 $("rng").onchange=()=>$("out").value=csv();
 $("cp").onclick=async()=>{const o=$("out");o.select();try{await navigator.clipboard.writeText(o.value)}catch(e){document.execCommand("copy")}$("cp").textContent="¡Copiado!";setTimeout(()=>$("cp").textContent="Copiar texto",1500)};
 function tab(t){["n","h","x"].forEach(k=>$(k).classList.toggle("hide",k!==t));document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));$("det").classList.add("hide");if(t==="h")list();if(t==="x")$("out").value=csv()}
 document.querySelector(".tabs").onclick=e=>{if(e.target.dataset.t)tab(e.target.dataset.t)};
-load();$("dev").textContent=S.name+" · ID "+S.dev;draw();loadCat();
+load();$("sel").value=S.seller||"";$("dev").textContent=S.name+" · ID "+S.dev;draw();loadCat();
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
